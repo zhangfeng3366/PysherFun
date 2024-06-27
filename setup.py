@@ -10,16 +10,16 @@ def readme():
         return f.read()
 
 setup(
-    name="Pysher",
+    name="PysherFun",
     version=VERSION,
     description="Pusher websocket client for python, based on Erik Kulyk's PythonPusherClient",
     long_description=readme(),
     long_description_content_type='text/markdown',
     keywords="pusher websocket client",
-    author="Nils Diefenbach",
-    author_email="nlsdfnbch.foss@kolabnow.com",
+    author="Zhifeng Shi",
+    author_email="zhangfeng3366@gmail.com",
     license="MIT",
-    url="https://github.com/deepbrook/Pysher",
+    url="https://github.com/zhangfeng3366/PysherFun",
     packages=find_packages('src'),
     package_dir={'': 'src'},
     install_requires=[
