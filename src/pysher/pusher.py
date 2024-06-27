@@ -18,6 +18,7 @@ class Pusher(object):
                  user_data=None, log_level=logging.INFO,
                  daemon=True, port=443, reconnect_interval=10, custom_host="", auto_sub=False,
                  http_proxy_host="", http_proxy_port=0, http_no_proxy=None, http_proxy_auth=None,
+                 headers_provider=None,
                  **thread_kwargs):
         """Initialize the Pusher instance.
 
@@ -38,6 +39,7 @@ class Pusher(object):
         :param int http_proxy_port:
         :param http_no_proxy:
         :param http_proxy_auth:
+        :param headers_provider: a function to get authentication header dynamically after initial connection
         :param Any thread_kwargs:
         """
         # https://pusher.com/docs/clusters
@@ -50,6 +52,7 @@ class Pusher(object):
         self.secret = secret
         self.auth_endpoint = auth_endpoint
         self.auth_endpoint_headers = auth_endpoint_headers
+        self.headers_provider = headers_provider
 
         self.user_data = user_data or {}
 
@@ -173,10 +176,13 @@ class Pusher(object):
                 "channel_name": channel_name,
                 "socket_id": self.connection.socket_id
             }
+            headers_to_use = self.auth_endpoint_headers
+            if self.headers_provider is not None:
+                headers_to_use = self.headers_provider()
             response = requests.post(
                 self.auth_endpoint,
                 data=request_data,
-                headers=self.auth_endpoint_headers
+                headers=headers_to_use
             )
             assert response.status_code == 200, f"Failed to get auth token from {self.auth_endpoint}"
             auth_key = response.json()["auth"]
@@ -202,10 +208,13 @@ class Pusher(object):
                 "socket_id": self.connection.socket_id,
                 "user_data": self.user_data,
             }
+            headers_to_use = self.auth_endpoint_headers
+            if self.headers_provider is not None:
+                headers_to_use = self.headers_provider()
             response = requests.post(
                 self.auth_endpoint,
                 data=request_data,
-                headers=self.auth_endpoint_headers
+                headers=headers_to_use
             )
             assert response.status_code == 200, f"Failed to get auth token from {self.auth_endpoint}"
             auth_key = response.json()["auth"]
