@@ -152,8 +152,11 @@ class Pusher(object):
         for channel_name, channel in self.channels.items():
             data = {'channel': channel_name}
 
-            if channel.auth:
-                data['auth'] = channel.auth
+            if channel_name.startswith('presence-'):
+                data['auth'] = self._generate_presence_token(channel_name)
+                data['channel_data'] = json.dumps(self.user_data)
+            elif channel_name.startswith('private-'):
+                data['auth'] = self._generate_auth_token(channel_name)
 
             self.connection.send_event('pusher:subscribe', data)
 
