@@ -299,7 +299,7 @@ class Connection(Thread):
                 else:
                     pass
             else:
-                self.logger.error("Connection: Unknown error code")
+                self.logger.error(f"Connection: Unknown error code. {data['code']}")
         else:
             self.logger.error("Connection: No error code supplied")
 
